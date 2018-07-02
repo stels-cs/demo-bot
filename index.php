@@ -32,7 +32,7 @@ $type = $data['type'] ?? '';
 $vk = new VKApiClient('5.78', VKLanguage::RUSSIAN);
 if ($type === 'message_new') {
     $message = $data['object'] ?? [];
-    $userId = $message['from_id'] ?? 0; //this need to change
+    $userId = $message['from_id'] ?? 0; //this change
     $body = $message['body'] ?? '';
     $payload = $message['payload'] ?? '';
     if ($payload) {
