@@ -1,12 +1,7 @@
 <?php
-
 require_once './vendor/autoload.php';
 
-
-const VK_TOKEN = 'ae51ff9f59f0c40f029c67c3588466bcec1f7ff0f333404769952a31290c3cf097f5b7c0cfd90b0da4562';
-
-use VK\Client\Enums\VKLanguage;
-use VK\Client\VKApiClient;
+const VK_TOKEN = 'c29ad8d89a62505e4ea24ab7f7c5b27ee8f713f56a86818282d78e26b8b8caae00688a7772ca8d8dd90f1';
 
 function myLog($str) {
     file_put_contents("php://stdout", "$str\n");
@@ -16,10 +11,20 @@ const COLOR_NEGATIVE = 'negative';
 const COLOR_POSITIVE = 'positive';
 const COLOR_DEFAULT = 'default';
 const COLOR_PRIMARY = 'primary';
-
 const CMD_ID = 'ID';
 const CMD_NEXT = 'NEXT';
 const CMD_TYPING = 'TYPING';
+
+use VK\Client\Enums\VKLanguage;
+use VK\Client\VKApiClient;
+
+// For verify server
+const NEED_VERIFY = FALSE; // after verify, set FALSE or delete lines 22-27
+if (NEED_VERIFY)
+{
+    echo 'ENTER YOUR\'S String to be returned'; // like 54257d15
+    die();
+}
 
 function getBtn($label, $color, $payload = '') {
     return [
@@ -31,48 +36,32 @@ function getBtn($label, $color, $payload = '') {
         'color' => $color
     ];
 }
-
-
 $json = file_get_contents('php://input');
 //myLog($json);
-
-
 $data = json_decode($json, true);
-
 $type = $data['type'] ?? '';
-
-$vk = new VKApiClient('5.78', VKLanguage::RUSSIAN);
-
+$vk = new VKApiClient('5.80', VKLanguage::RUSSIAN);
 if ($type === 'message_new') {
-
-
     $message = $data['object'] ?? [];
-    $userId = $message['user_id'] ?? 0;
+    $userId = $message['from_id'] ?? 0; //this change
     $body = $message['body'] ?? '';
-
     $payload = $message['payload'] ?? '';
-
     if ($payload) {
         $payload = json_decode($payload, true);
     }
-
-    myLog("MSG: ".$body." PAYLOAD:".$payload);
-
+    //myLog($userId);
+   myLog("MSG: ".$body." PAYLOAD:".$payload);
     $kbd = [
         'one_time' => false,
         'buttons' => [
             [getBtn("Покажи мой ID", COLOR_DEFAULT, CMD_ID)],
             [getBtn("Далее", COLOR_PRIMARY, CMD_NEXT)],
-
         ]
     ];
-
     $msg = "Привет я бот!";
-
     if ($payload === CMD_ID) {
         $msg = "Ваш id ".$userId;
     }
-
     if ($payload === CMD_NEXT) {
         $kbd = [
             'one_time' => false,
@@ -82,7 +71,6 @@ if ($type === 'message_new') {
             ]
         ];
     }
-
     if ($payload === CMD_TYPING) {
         try {
             $res = $vk->messages()->setActivity(VK_TOKEN, [
@@ -94,7 +82,6 @@ if ($type === 'message_new') {
             myLog( $e->getCode().' '.$e->getMessage() );
         }
     }
-
     try {
         if ($msg !== null) {
             $response = $vk->messages()->send(VK_TOKEN, [
@@ -106,8 +93,5 @@ if ($type === 'message_new') {
     } catch (\Exception $e) {
         myLog( $e->getCode().' '.$e->getMessage() );
     }
-
 }
-
-
 echo  "OK";
