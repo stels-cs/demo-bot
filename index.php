@@ -15,6 +15,15 @@ const CMD_ID = 'ID';
 const CMD_NEXT = 'NEXT';
 const CMD_TYPING = 'TYPING';
 
+// For verify server
+const NEED_VERIFY = TRUE; // after verify, set FALSE or delete lines 18-24
+if (NEED_VERIFY)
+{
+    echo 'ENTER YOUR\'S String to be returned'; // like 54257d15
+    die();
+}
+ 
+
 function getBtn($label, $color, $payload = '') {
     return [
         'action' => [
