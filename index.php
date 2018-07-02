@@ -1,7 +1,7 @@
 <?php
 require_once './vendor/autoload.php';
 
-const VK_TOKEN = 'ae51ff9f59f0c40f029c67c3588466bcec1f7ff0f333404769952a31290c3cf097f5b7c0cfd90b0da4562';
+const VK_TOKEN = 'c29ad8d89a62505e4ea24ab7f7c5b27ee8f713f56a86818282d78e26b8b8caae00688a7772ca8d8dd90f1';
 
 function myLog($str) {
     file_put_contents("php://stdout", "$str\n");
@@ -15,14 +15,16 @@ const CMD_ID = 'ID';
 const CMD_NEXT = 'NEXT';
 const CMD_TYPING = 'TYPING';
 
+use VK\Client\Enums\VKLanguage;
+use VK\Client\VKApiClient;
+
 // For verify server
-const NEED_VERIFY = TRUE; // after verify, set FALSE or delete lines 18-24
+const NEED_VERIFY = FALSE; // after verify, set FALSE or delete lines 22-27
 if (NEED_VERIFY)
 {
     echo 'ENTER YOUR\'S String to be returned'; // like 54257d15
     die();
 }
- 
 
 function getBtn($label, $color, $payload = '') {
     return [
@@ -38,7 +40,7 @@ $json = file_get_contents('php://input');
 //myLog($json);
 $data = json_decode($json, true);
 $type = $data['type'] ?? '';
-$vk = new VKApiClient('5.78', VKLanguage::RUSSIAN);
+$vk = new VKApiClient('5.80', VKLanguage::RUSSIAN);
 if ($type === 'message_new') {
     $message = $data['object'] ?? [];
     $userId = $message['from_id'] ?? 0; //this change
