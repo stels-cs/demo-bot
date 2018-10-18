@@ -47,7 +47,7 @@ if ($type === 'message_new') {
 
 
     $message = $data['object'] ?? [];
-    $userId = $message['user_id'] ?? 0;
+    $userId = $message['user_id'] ?? $message['peer_id'];
     $body = $message['body'] ?? '';
 
     $payload = $message['payload'] ?? '';
